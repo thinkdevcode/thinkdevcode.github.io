@@ -10,7 +10,7 @@ Launch some new Ubuntu 14.04 instance on AWS and ssh in to each and do the follo
 
 ## Install java
 
-{% highlight %}
+{% highlight bash %}
 sudo add-apt-repository ppa:webupd8team/java
 sudo apt-get update
 sudo apt-get install oracle-java8-installer
@@ -18,13 +18,13 @@ sudo apt-get install oracle-java8-installer
 
 Verify java is installed with:
 
-{% highlight %}
+{% highlight bash %}
 java -version
 {% endhighlight %}
 
 And then let java setup environment defaults:
 
-{% highlight %}
+{% highlight bash %}
 sudo apt-get install oracle-java8-set-default
 {% endhighlight %}
 
@@ -32,14 +32,14 @@ sudo apt-get install oracle-java8-set-default
 
 Edit the sources file at **/etc/apt/sources.list** and add:
 
-{% highlight %}
+{% highlight bash %}
 deb http://www.apache.org/dist/cassandra/debian 21x main
 deb-src http://www.apache.org/dist/cassandra/debian 21x main
 {% endhighlight %}
 
 Now we need to add GPG keys so lets run:
 
-{% highlight %}
+{% highlight bash %}
 gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
 gpg --export --armor F758CE318D77295D | sudo apt-key add -
 gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
@@ -50,26 +50,26 @@ gpg --export --armor 0353B12C | sudo apt-key add -
 
 And let's install:
 
-{% highlight %}
+{% highlight bash %}
 sudo apt-get update
 sudo apt-get install cassandra
 {% endhighlight %}
 
 After installation Cassandra will be running and we need to kill the process in order to configure the cluster, so run:
 
-{% highlight %}
+{% highlight bash %}
 ps -aux | grep cassandra
 {% endhighlight %}
 
 Find the cassandra PID and run:
 
-{% highlight %}
+{% highlight bash %}
 sudo kill 3896
 {% endhighlight %}
 
 And let's delete the data:
 
-{% highlight %}
+{% highlight bash %}
 sudo rm -rf /var/lib/cassandra/*
 {% endhighlight %}
 
@@ -77,13 +77,13 @@ sudo rm -rf /var/lib/cassandra/*
 
 Since we're launching a three node cluster we really only need to have one seed node that the other two nodes rely on. For now, ssh into whichever server you want the seed server to be and let's edit **/etc/cassandra/cassandra.yaml**:
 
-{% highlight %}
+{% highlight bash %}
 sudo nano /etc/cassandra/cassandra.yaml
 {% endhighlight %}
 
 Find the follow configuration settings:
 
-{% highlight %}
+{% highlight yaml %}
 cluster_name: "<name of your cluster>"
 ...
 seed_provider: 
@@ -98,13 +98,13 @@ rpc_address: <private ip of current server>
 
 When completed, let's run Cassandra:
 
-{% highlight %}
+{% highlight bash %}
 sudo cassandra &
 {% endhighlight %}
 *The & is so we run Cassandra in the background.*
 
 Now, repeat these steps with the remaining nodes. When you are finished and you've launched Cassandra on all of the nodes (without errors!) you can run:
 
-{% highlight %}
+{% highlight bash %}
 nodetool status
 {% endhighlight %}
